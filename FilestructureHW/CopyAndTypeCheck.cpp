@@ -46,3 +46,85 @@ int copy(char *sourceFile, char *destinationFile)
 
 	return(0);   
 }
+
+int wholeCopy(char *sourceDir, char* destinationDir) {
+	char *destinationPath = destinationDir;
+	char *sourcePath = sourceDir;
+	char *sourceFile;
+	char *destinationFile;
+	char *newDestinationPath;
+	char *newSourchPath;
+	_finddata_t fd;
+	long handle;
+	int result = 1;
+	const int notExist = -1, directory = 0, files = 1;
+	char *sourceList;
+
+	sourceList = (char*)malloc(strlen(sourceDir) + strlen("*.*") + 1);
+	strcpy(sourceList, sourcePath);
+	strcat(sourceList, "*.*");
+	handle = _findfirst(sourceList, &fd);  //경로 내 모든 파일을 찾는다.
+	_findnext(handle, &fd);
+	_findnext(handle, &fd);
+
+	if (handle == -1)
+	{
+		printf("There were no files.\n");
+		return -1;
+	}
+
+	while (result != -1)
+	{
+		sourceFile = (char*)malloc(strlen(sourcePath) + strlen(fd.name) + 1);
+		destinationFile = (char*)malloc(strlen(destinationPath) + strlen(fd.name) + 1);
+		strcpy(sourceFile, sourcePath);
+		strcat(sourceFile, fd.name);
+		strcpy(destinationFile, destinationPath);
+		strcat(destinationFile, fd.name);
+
+		if (fileTypeCheck(sourceFile) == directory) {
+			newSourchPath = (char*)malloc(strlen(sourceFile) + strlen("\\") + 1);
+			strcpy(newSourchPath, sourceFile);
+			strcat(newSourchPath, "\\");
+			newDestinationPath = (char*)malloc(strlen(destinationFile) + strlen("\\") + 1);
+			strcpy(newDestinationPath, destinationFile);
+			strcat(newDestinationPath, "\\");
+			/*목적지에 복사할 디렉토리가 없을경우*/
+			if (fileTypeCheck(destinationFile) == notExist || fileTypeCheck(destinationFile) == files) {
+				_mkdir(destinationFile); //해당 디렉토리 생성				
+				wholeCopy(newSourchPath, newDestinationPath);						/*Recursive 복사*/
+			}
+			/*목적지에 복사할 디렉토리가 이미 있을 경우*/
+			//if (/*수정된 날짜 비교*/) {
+				wholeCopy(newSourchPath, newDestinationPath);
+			//}
+				free(newSourchPath);
+				free(newDestinationPath);
+		}
+		else if (fileTypeCheck(sourceFile) == files) {
+			/*목적지에 복사할 파일이 존재하지 않을 경우*/
+			if (fileTypeCheck(destinationFile) == notExist || fileTypeCheck(destinationFile) == directory) {
+				if (copy(sourceFile, destinationFile) == 0)
+					printf("성공\n");
+				else
+					fprintf(stderr, "실패\n");
+			}
+			/*목적지에 복사할 파일이 이미 존재할 경우*/
+			else {
+				//if (/*수정된 날짜 비교*/) {
+					if (copy(sourceFile, destinationFile) == 0)
+						printf("성공\n");
+					else
+						fprintf(stderr, "실패\n");
+				//}
+			}
+		}
+
+		free(sourceFile);
+		free(destinationFile);
+		result = _findnext(handle, &fd);
+	}
+
+	_findclose(handle);
+	return 0;
+}

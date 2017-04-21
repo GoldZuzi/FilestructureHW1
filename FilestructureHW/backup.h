@@ -8,3 +8,4 @@
 
 int fileTypeCheck(char* fileName);
 int copy(char *sourceFile, char *destinationFile);
+int wholeCopy(char *sourceDir, char* destinationDir);
