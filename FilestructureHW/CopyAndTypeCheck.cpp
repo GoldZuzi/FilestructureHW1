@@ -53,7 +53,7 @@ int wholeCopy(char *sourceDir, char* destinationDir) {
 	char *sourceFile;
 	char *destinationFile;
 	char *newDestinationPath;
-	char *newSourchPath;
+	char *newSourcePath;
 	_finddata_t fd;
 	long handle;
 	int result = 1;
@@ -73,6 +73,10 @@ int wholeCopy(char *sourceDir, char* destinationDir) {
 		return -1;
 	}
 
+	if (fileTypeCheck(destinationDir) == notExist) {
+		_mkdir(destinationDir);
+	}
+
 	while (result != -1)
 	{
 		sourceFile = (char*)malloc(strlen(sourcePath) + strlen(fd.name) + 1);
@@ -83,22 +87,22 @@ int wholeCopy(char *sourceDir, char* destinationDir) {
 		strcat(destinationFile, fd.name);
 
 		if (fileTypeCheck(sourceFile) == directory) {
-			newSourchPath = (char*)malloc(strlen(sourceFile) + strlen("\\") + 1);
-			strcpy(newSourchPath, sourceFile);
-			strcat(newSourchPath, "\\");
+			newSourcePath = (char*)malloc(strlen(sourceFile) + strlen("\\") + 1);
+			strcpy(newSourcePath, sourceFile);
+			strcat(newSourcePath, "\\");
 			newDestinationPath = (char*)malloc(strlen(destinationFile) + strlen("\\") + 1);
 			strcpy(newDestinationPath, destinationFile);
 			strcat(newDestinationPath, "\\");
 			/*목적지에 복사할 디렉토리가 없을경우*/
 			if (fileTypeCheck(destinationFile) == notExist || fileTypeCheck(destinationFile) == files) {
 				_mkdir(destinationFile); //해당 디렉토리 생성				
-				wholeCopy(newSourchPath, newDestinationPath);						/*Recursive 복사*/
+				wholeCopy(newSourcePath, newDestinationPath);						/*Recursive 복사*/
 			}
 			/*목적지에 복사할 디렉토리가 이미 있을 경우*/
 			//if (/*수정된 날짜 비교*/) {
-				wholeCopy(newSourchPath, newDestinationPath);
+				wholeCopy(newSourcePath, newDestinationPath);
 			//}
-				free(newSourchPath);
+				free(newSourcePath);
 				free(newDestinationPath);
 		}
 		else if (fileTypeCheck(sourceFile) == files) {
