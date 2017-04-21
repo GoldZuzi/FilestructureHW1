@@ -1,58 +1,26 @@
 #pragma warning(disable:4996)
+#include "backup.h"
+#include <string>
+#include <iostream>
+using namespace std;
 
-#include <stdio.h>
-
-#include <sys/stat.h>
-
-#include <time.h>
-
-#include <errno.h>
-
-int timecheck(char* sourceFilename, char* destinationFilename) {
+int timeCheck(char* sourceFileName, char* destinationFileName) {
 
 	struct _stat buf_source;
 	struct _stat buf_destination;
-	char* filename = "sourceFilename";
+	string sourceFileDate;
+	string destinationFileDate;
+	int compare = 0;
 	
-
-
-
-
-	if (_stat(filename, &buf_source) != 0) {
-
-		switch (errno) {
-
-		case ENOENT:
-
-			fprintf(stderr, "File %s not found.\n", filename); break;
-
-		case EINVAL:
-
-			fprintf(stderr, "Invalid parameter to _stat.\n"); break;
-
-		default:
-
-			fprintf(stderr, "Unexpected error in _stat.\n");
-
-		}
-
-	}
-
-	else {
-
-		
-		1900 + localtime(&buf_source.st_ctime)->tm_year);
-		printf("\tTime Creation     : %d\n", 1 + localtime(&buf_source.st_ctime)->tm_mon);
-		printf("\tTime Creation     : %d\n", localtime(&buf_source.st_ctime)->tm_mday);
-		printf("\tTime Creation     : %d\n", localtime(&buf_source.st_ctime)->tm_hour);
-		printf("\tTime Creation     : %d\n", localtime(&buf_source.st_ctime)->tm_min);
-		printf("\tTime Creation     : %d\n", localtime(&buf_source.st_ctime)->tm_sec);
-
-
-		if()
-
-
-
-	}
-
+	_stat(sourceFileName, &buf_source);
+	_stat(destinationFileName, &buf_destination);
+	
+	sourceFileDate = "" + to_string(localtime(&buf_source.st_mtime)->tm_year) + to_string(localtime(&buf_source.st_mtime)->tm_mon) + to_string(localtime(&buf_source.st_mtime)->tm_mday)\
+						+ to_string(localtime(&buf_source.st_mtime)->tm_hour) + to_string(localtime(&buf_source.st_mtime)->tm_min) + to_string(localtime(&buf_source.st_mtime)->tm_sec);
+	destinationFileDate = "" + to_string(localtime(&buf_destination.st_mtime)->tm_year) + to_string(localtime(&buf_destination.st_mtime)->tm_mon) + to_string(localtime(&buf_destination.st_mtime)->tm_mday)\
+							 + to_string(localtime(&buf_destination.st_mtime)->tm_hour) + to_string(localtime(&buf_destination.st_mtime)->tm_min) + to_string(localtime(&buf_destination.st_mtime)->tm_sec);
+	//cout << sourceFileDate << endl;
+	//cout << sourceFileDate << endl;
+	compare = sourceFileDate.compare(destinationFileDate);
+	return compare;
 }
