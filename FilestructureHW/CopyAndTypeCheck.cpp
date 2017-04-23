@@ -53,7 +53,7 @@ int wholeCopy(char *sourceDir, char* destinationDir) {
 	char *sourceFileList;
 	char *newDestinationPath;
 	char *newSourcePath;
-	_finddata_t fd;
+	_finddatai64_t fd;
 	long handle;
 	int result = 1;
 	const int notExist = -1, directory = 0, files = 1;
@@ -62,9 +62,9 @@ int wholeCopy(char *sourceDir, char* destinationDir) {
 	strcpy(sourceFileList, sourceDir);
 	strcat(sourceFileList, "*.*");
 
-	handle = _findfirst(sourceFileList, &fd);  //경로 내 모든 파일을 찾는다.
-	_findnext(handle, &fd); //. 생략
-	_findnext(handle, &fd); //.. 생략
+	handle = _findfirsti64(sourceFileList, &fd);  //경로 내 모든 파일을 찾는다.
+	_findnexti64(handle, &fd); //. 생략
+	_findnexti64(handle, &fd); //.. 생략
 
 	if (handle == -1)
 	{
@@ -92,11 +92,11 @@ int wholeCopy(char *sourceDir, char* destinationDir) {
 
 		/*복사할 자료가 디렉토리일 경우*/
 		if (fileTypeCheck(sourceFile) == directory) {
-
+			/*해당 소스 디렉토리를 새로운 경로로 지정*/
 			newSourcePath = (char*)malloc(strlen(sourceFile) + strlen("\\") + 1);
 			strcpy(newSourcePath, sourceFile);
 			strcat(newSourcePath, "\\");
-
+			/*새로운 타겟 목적지 경로를 설정*/
 			newDestinationPath = (char*)malloc(strlen(destinationFile) + strlen("\\") + 1);
 			strcpy(newDestinationPath, destinationFile);
 			strcat(newDestinationPath, "\\");
@@ -121,24 +121,24 @@ int wholeCopy(char *sourceDir, char* destinationDir) {
 			/*목적지에 복사할 파일이 존재하지 않을 경우*/
 			if (fileTypeCheck(destinationFile) == notExist || fileTypeCheck(destinationFile) == directory) {
 				if (copy(sourceFile, destinationFile) == 0)
-					printf("성공\n");
+					makeLog(destinationFile);
 				else
-					fprintf(stderr, "실패\n");
+					fprintf(stderr, "%s  실패\n", destinationFile);
 			}
 			/*목적지에 복사할 파일이 이미 존재할 경우*/
 			else {
 				if (timeCheck(sourceFile, destinationFile) > 0) {
 					if (copy(sourceFile, destinationFile) == 0)
-						printf("성공\n");
+						makeLog(destinationFile);
 					else
-						fprintf(stderr, "실패\n");
+						fprintf(stderr, "%s  실패\n", destinationFile);
 				}
 			}
 		}
 
 		free(sourceFile);
 		free(destinationFile);
-		result = _findnext(handle, &fd);
+		result = _findnexti64(handle, &fd);
 	}
 
 	_findclose(handle);

@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="CopyAndTypeCheck.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="makeLog.cpp" />
     <ClCompile Include="timecheckcpp.cpp" />
   </ItemGroup>
   <ItemGroup>
