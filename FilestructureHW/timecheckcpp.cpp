@@ -6,14 +6,14 @@ using namespace std;
 
 int timeCheck(char* sourceFileName, char* destinationFileName) {
 
-	struct _stat buf_source;
-	struct _stat buf_destination;
+	struct _stati64 buf_source;
+	struct _stati64 buf_destination;
 	string sourceFileDate;
 	string destinationFileDate;
 	int compare = 0;
 	
-	_stat(sourceFileName, &buf_source);
-	_stat(destinationFileName, &buf_destination);
+	_stati64(sourceFileName, &buf_source);
+	_stati64(destinationFileName, &buf_destination);
 	
 	sourceFileDate = "" + to_string(localtime(&buf_source.st_mtime)->tm_year) + to_string(localtime(&buf_source.st_mtime)->tm_mon) + to_string(localtime(&buf_source.st_mtime)->tm_mday)\
 						+ to_string(localtime(&buf_source.st_mtime)->tm_hour) + to_string(localtime(&buf_source.st_mtime)->tm_min) + to_string(localtime(&buf_source.st_mtime)->tm_sec);
