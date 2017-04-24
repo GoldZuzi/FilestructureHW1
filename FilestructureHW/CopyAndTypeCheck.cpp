@@ -63,8 +63,6 @@ int wholeCopy(char *sourceDir, char* destinationDir) {
 	strcat(sourceFileList, "*.*");
 
 	handle = _findfirsti64(sourceFileList, &fd);  //경로 내 모든 파일을 찾는다.
-	_findnexti64(handle, &fd); //. 생략
-	_findnexti64(handle, &fd); //.. 생략
 
 	if (handle == -1)
 	{
@@ -80,6 +78,15 @@ int wholeCopy(char *sourceDir, char* destinationDir) {
 	/*파일 복사*/
 	while (result != -1)
 	{
+		while (!strcmp(fd.name, ".") || !strcmp(fd.name, "..")) {
+			result = _findnexti64(handle, &fd);
+			if (result == -1) {
+				break;
+			}
+		}
+		if (result == -1) {
+			break;
+		}
 		/*소스 파일 경로 + 파일 이름*/
 		sourceFile = (char*)malloc(strlen(sourceDir) + strlen(fd.name) + 1);
 		strcpy(sourceFile, sourceDir);
